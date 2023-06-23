@@ -2,7 +2,7 @@
 % Please edit documentation in R/GVSSB.R
 \name{GVSSB}
 \alias{GVSSB}
-\title{Group Variational Spike-and-Slab Bayes}
+\title{This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes.}
 \usage{
 GVSSB(
   X,
@@ -10,7 +10,7 @@ GVSSB(
   groups,
   w,
   sigma_tilde,
-  prior = c("Gaussian","Laplace","T"),
+  prior = "Gaussian",
   nu = 1,
   lambda = 1,
   em = T,
@@ -68,6 +68,7 @@ A list of values containing the result of the algorithm:
 This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes.
 }
 \examples{
+
 data(Birthwt)
 X <- Birthwt$X
 Y <- Birthwt$bwt

@@ -28,6 +28,7 @@
 #'    \code{lambda} \tab The value of the hyperparameter \eqn{\lambda}. If em=FALSE, this value is the same as the input argument.\cr
 #' }
 #' @examples
+#'
 #' data(Birthwt)
 #' X <- Birthwt$X
 #' Y <- Birthwt$bwt

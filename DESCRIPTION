@@ -4,9 +4,10 @@ Title: Group Variational Spike-and-Slab Bayes
 Version: 0.0.1
 Author: Changhao Ge, Buyu Lin
 Maintainer: Changhao Ge <gech@upenn.sas.edu>
-Description: 
 License: GPL-3
+Description: FILL
+LazyData: TRUE
 Encoding: UTF-8
-LazyData: true
 Imports: glmnet
 RoxygenNote: 7.2.3
+VignetteBuilder: knitr
