@@ -7,4 +7,4 @@ To install the package, run the following code:
 install.packages("/path/to/folder/GVSSB", repos = NULL, type = "source")
 ```
 
-If the package \(\pkg{devtools}\)
+If the package \eqn{\pkg{devtools}}
