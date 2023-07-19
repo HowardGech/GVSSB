@@ -52,7 +52,13 @@ fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
 
-# 
+# give the prediction
+n_test <- 50
+X_test <- mvtnorm::rmvnorm(n_test, sigma=diag(p))
+predict.Gaussian <- predict.GVSSB(fit.Gaussian, X_test)
+predict.Laplace <- predict.GVSSB(fit.Laplace, X_test)
+predict.Cauchy <- predict.GVSSB(fit.Cauchy, X_test)
+
 }
 \seealso{
 \code{\link{GVSSB}}, \code{\link{cv.GVSSB}}
