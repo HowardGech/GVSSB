@@ -67,7 +67,7 @@ Here we compare the true nonzero groups and the selected (positive) groups:
 sort(nonzero_group)
 sort(fit$selected_groups)
 ```
-![Alt text](selected_groups.jpg)
+![Alt text](images/selected_groups.jpg)
 
 After fitting the GVSSB model, we can use it for prediction:
 
