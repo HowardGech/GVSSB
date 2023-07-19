@@ -59,6 +59,6 @@ predict.GVSSB = function(object, X, threshold, ...){
   # compute the prediction of the response vector
   Y_hat = X %*% beta + intercept
   fit = list(Y_hat = Y_hat)
-  class(fit) = 'predicted_GVSSB'
+  class(fit) = 'predict_GVSSB'
   return(fit)
 }

@@ -64,6 +64,8 @@ An object with S3 class "GVSSB".
    \tab \cr
    \code{gamma} \tab The posterior inclusion probability for each groups.\cr
    \tab \cr
+   \code{selected_groups} \tab The positive group indexes selected by the algorithm.\cr
+   \tab \cr
    \code{lambda} \tab The value of the hyperparameter \eqn{\lambda}. If em=FALSE, this value is the same as the input argument.\cr
    \tab \cr
    \code{groups_index} \tab The group index with length p.\cr
@@ -99,7 +101,9 @@ for(index in nonzero_group){
 groups <- rep(1:G, each = p_i)
 
 # generate response vector
-Y <- X \%*\% beta + rnorm(n, 0, 1)
+
+snr <- 1
+Y <- X \%*\% beta + rnorm(n, 0, sd = sqrt(var(X \%*\% beta) / snr))
 
 # fit GVSSB model
 fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')

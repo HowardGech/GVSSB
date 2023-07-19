@@ -29,6 +29,8 @@
 #'    \tab \cr
 #'    \code{gamma} \tab The posterior inclusion probability for each groups.\cr
 #'    \tab \cr
+#'    \code{selected_groups} \tab The positive group indexes selected by the algorithm.\cr
+#'    \tab \cr
 #'    \code{lambda} \tab The value of the hyperparameter \eqn{\lambda}. If em=FALSE, this value is the same as the input argument.\cr
 #'    \tab \cr
 #'    \code{groups_index} \tab The group index with length p.\cr
@@ -40,14 +42,14 @@
 #' @examples
 #' # load GVSSB library
 #' library(GVSSB)
-#' 
+#'
 #' # generate covariates
 #' n <- 200
 #' G <- 200
 #' p_i <- 5
 #' p <- G * p_i
 #' X <- mvtnorm::rmvnorm(n, sigma=diag(p))
-#' 
+#'
 #' # generate coefficients
 #' k <- 10
 #' beta <- rep(0,p)
@@ -55,13 +57,15 @@
 #' for(index in nonzero_group){
 #'     beta[p_i * (index - 1) + 1:p_i] <- runif(p_i, -1, 1)
 #' }
-#' 
+#'
 #' # define group index
 #' groups <- rep(1:G, each = p_i)
-#' 
+#'
 #' # generate response vector
-#' Y <- X %*% beta + rnorm(n, 0, 1)
-#' 
+#'
+#' snr <- 1
+#' Y <- X %*% beta + rnorm(n, 0, sd = sqrt(var(X %*% beta) / snr))
+#'
 #' # fit GVSSB model
 #' fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 #' fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
@@ -250,12 +254,13 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'),
       betaSD[active] = (Qmat[[g]] %*% diag(1/sqrt(Dvec[[g]])) %*% beta[active])
     }
   }
-  
+
   muSD = beta
   betaSD = beta * (gamma[groups_index] > threshold)
   interceptSD = mean(Yold-Xold%*%betaSD)
-  
-  processed_model  = list(intercept=interceptSD, sigma = sigma_tilde, gamma = gamma, beta=betaSD, lambda=lambda, groups_index = groups_index, prior = prior, nu = nu)
+  selected_groups = which(gamma > threshold)
+
+  processed_model  = list(intercept=interceptSD, sigma = sigma_tilde, gamma = gamma, beta=betaSD, selected_groups = selected_groups, lambda=lambda, groups_index = groups_index, prior = prior, nu = nu)
   class(processed_model) = 'GVSSB'
 
   return(processed_model)
