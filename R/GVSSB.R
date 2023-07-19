@@ -1,13 +1,16 @@
+#' Fit a group linear regression model with discrete spike and slab prior.
+#'
 #' This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes.
 #'
 #' @import glmnet
+#' @import mvtnorm
 #' @param X An n by p matrix of covariates.
 #' @param Y The outcome vector with length n, or the n by 1 outcome matrix.
 #' @param groups The group indicator vector with length p.
 #' @param w The hyperparameter controlling the sparsity.
 #' @param sigma_tilde The initial value of noise level \eqn{\tilde{\sigma}^2}.
 #' @param prior The slab part of the coefficient prior. Default is "Gaussian".
-#' @param nu Degree of freedom when the slab is T distribution. Default is 1.
+#' @param nu Degree of freedom when the slab is T distribution. Only useful when prior='T'. Default is 1.
 #' @param lambda The initial value of hyperparameter \eqn{\lambda}. Default is 1.
 #' @param em Whether update hyperparameters using variational EM algorithm. Default is TRUE.
 #' @param alpha Shape of the inverse gamma distribution for the noise level \eqn{\tilde{\sigma}^2}. Default is 0.
@@ -15,7 +18,8 @@
 #' @param threshold Threshold of the posterior inclusion probability. Only coefficients with posterior inclusion larger than this threshold are considered nonzero (signals).
 #' @param tol Convergence tolerance. The algorithm iterates untill the difference of binary entropy between two consecutive steps is smaller than this value. Default is 1e-5.
 #' @param iter.max Maximum iteration number of the algorithm. Default is 5000.
-#' @return A list of values containing the result of the algorithm:
+#' @param info Whether print the iteration numbers per 100 steps and when the convergence is satisfied. Default is TRUE.
+#' @return An object with S3 class "GVSSB".
 #' \tabular{ll}{
 #'    \code{beta} \tab The sparse estimation of coefficients. \cr
 #'    \tab \cr
@@ -26,23 +30,48 @@
 #'    \code{gamma} \tab The posterior inclusion probability for each groups.\cr
 #'    \tab \cr
 #'    \code{lambda} \tab The value of the hyperparameter \eqn{\lambda}. If em=FALSE, this value is the same as the input argument.\cr
+#'    \tab \cr
+#'    \code{groups_index} \tab The group index with length p.\cr
+#'    \tab \cr
+#'    \code{prior} \tab The slab part of the coefficient prior.\cr
+#'    \tab \cr
+#'    \code{nu} \tab Degree of freedom when the slab is T distribution.\cr
 #' }
 #' @examples
-#'
-#' data(Birthwt)
-#' X <- Birthwt$X
-#' Y <- Birthwt$bwt
-#' groups <- Birthwt$group
-#'
+#' # load GVSSB library
+#' library(GVSSB)
+#' 
+#' # generate covariates
+#' n <- 200
+#' G <- 200
+#' p_i <- 5
+#' p <- G * p_i
+#' X <- mvtnorm::rmvnorm(n, sigma=diag(p))
+#' 
+#' # generate coefficients
+#' k <- 10
+#' beta <- rep(0,p)
+#' nonzero_group <- sample(1:G, k)
+#' for(index in nonzero_group){
+#'     beta[p_i * (index - 1) + 1:p_i] <- runif(p_i, -1, 1)
+#' }
+#' 
+#' # define group index
+#' groups <- rep(1:G, each = p_i)
+#' 
+#' # generate response vector
+#' Y <- X %*% beta + rnorm(n, 0, 1)
+#' 
+#' # fit GVSSB model
 #' fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 #' fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 #' fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
-#'
 #' @export
-GVSSB = function(X, Y, groups, w, sigma_tilde,prior='Gaussian', nu=1,lambda=1, em=T,alpha= 0,beta = 0,threshold = 0.5,tol = 1e-5, iter.max = 5000){
+GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'), nu=1,lambda=1, em=T,alpha= 0,beta = 0,threshold = 0.5,tol = 1e-5, iter.max = 5000, info = T){
   Y = as.matrix(Y)
   n = nrow(Y)
-  if(!(prior %in% c('Gaussian',"Laplace",'T'))) stop("Improper prior!")
+  if(nrow(X) != n) stop("input dimensions doesn't match!")
+  prior = match.arg(prior)
 
   uni.group = unique(groups)
 
@@ -195,12 +224,12 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior='Gaussian', nu=1,lambda=1, e
       v = term1 + term2 + term3
       sigma_tilde = as.numeric(sqrt((v/2 + beta)/(n/2 + alpha)))
       if(abs(sigma_tilde - sigma_old) < 1e-4){
-        message(paste("The total number of iterations is:",count,sep=' '))
+        if(info) message(paste("The total number of iterations is:",count,sep=' '))
         break
       }
     }
     if(count %% 100 == 0)
-      message(paste("The number of current iterations is:",count,sep=' '))
+      if(info) message(paste("The number of current iterations is:",count,sep=' '))
       if(count == iter.max){
         warning("The algorithm doesn't converge!")
         break
@@ -209,7 +238,7 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior='Gaussian', nu=1,lambda=1, e
   }
 
   ## Compute the sparse estimation for beta.
-  beta = (gamma[groups_index] > threshold) * mu
+  beta =  mu
 
   ## Compute the estimation of coefficients and intercept for raw data.
   betaSD = rep(NA, length(mu))
@@ -221,7 +250,13 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior='Gaussian', nu=1,lambda=1, e
       betaSD[active] = (Qmat[[g]] %*% diag(1/sqrt(Dvec[[g]])) %*% beta[active])
     }
   }
+  
+  muSD = beta
+  betaSD = beta * (gamma[groups_index] > threshold)
   interceptSD = mean(Yold-Xold%*%betaSD)
+  
+  processed_model  = list(intercept=interceptSD, sigma = sigma_tilde, gamma = gamma, beta=betaSD, lambda=lambda, groups_index = groups_index, prior = prior, nu = nu)
+  class(processed_model) = 'GVSSB'
 
-  return(list(intercept=interceptSD, sigma = sigma_tilde,gamma = gamma, beta=betaSD,lambda=lambda))
+  return(processed_model)
 }

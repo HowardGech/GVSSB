@@ -2,7 +2,7 @@
 % Please edit documentation in R/GVSSB.R
 \name{GVSSB}
 \alias{GVSSB}
-\title{This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes.}
+\title{Fit a group linear regression model with discrete spike and slab prior.}
 \usage{
 GVSSB(
   X,
@@ -10,7 +10,7 @@ GVSSB(
   groups,
   w,
   sigma_tilde,
-  prior = "Gaussian",
+  prior = c("Gaussian", "Laplace", "T"),
   nu = 1,
   lambda = 1,
   em = T,
@@ -18,7 +18,8 @@ GVSSB(
   beta = 0,
   threshold = 0.5,
   tol = 1e-05,
-  iter.max = 5000
+  iter.max = 5000,
+  info = T
 )
 }
 \arguments{
@@ -34,7 +35,7 @@ GVSSB(
 
 \item{prior}{The slab part of the coefficient prior. Default is "Gaussian".}
 
-\item{nu}{Degree of freedom when the slab is T distribution. Default is 1.}
+\item{nu}{Degree of freedom when the slab is T distribution. Only useful when prior='T'. Default is 1.}
 
 \item{lambda}{The initial value of hyperparameter \eqn{\lambda}. Default is 1.}
 
@@ -49,9 +50,11 @@ GVSSB(
 \item{tol}{Convergence tolerance. The algorithm iterates untill the difference of binary entropy between two consecutive steps is smaller than this value. Default is 1e-5.}
 
 \item{iter.max}{Maximum iteration number of the algorithm. Default is 5000.}
+
+\item{info}{Whether print the iteration numbers per 100 steps and when the convergence is satisfied. Default is TRUE.}
 }
 \value{
-A list of values containing the result of the algorithm:
+An object with S3 class "GVSSB".
 \tabular{ll}{
    \code{beta} \tab The sparse estimation of coefficients. \cr
    \tab \cr
@@ -62,20 +65,44 @@ A list of values containing the result of the algorithm:
    \code{gamma} \tab The posterior inclusion probability for each groups.\cr
    \tab \cr
    \code{lambda} \tab The value of the hyperparameter \eqn{\lambda}. If em=FALSE, this value is the same as the input argument.\cr
+   \tab \cr
+   \code{groups_index} \tab The group index with length p.\cr
+   \tab \cr
+   \code{prior} \tab The slab part of the coefficient prior.\cr
+   \tab \cr
+   \code{nu} \tab Degree of freedom when the slab is T distribution.\cr
 }
 }
 \description{
 This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes.
 }
 \examples{
+# load GVSSB library
+library(GVSSB)
 
-data(Birthwt)
-X <- Birthwt$X
-Y <- Birthwt$bwt
-groups <- Birthwt$group
+# generate covariates
+n <- 200
+G <- 200
+p_i <- 5
+p <- G * p_i
+X <- mvtnorm::rmvnorm(n, sigma=diag(p))
 
+# generate coefficients
+k <- 10
+beta <- rep(0,p)
+nonzero_group <- sample(1:G, k)
+for(index in nonzero_group){
+    beta[p_i * (index - 1) + 1:p_i] <- runif(p_i, -1, 1)
+}
+
+# define group index
+groups <- rep(1:G, each = p_i)
+
+# generate response vector
+Y <- X \%*\% beta + rnorm(n, 0, 1)
+
+# fit GVSSB model
 fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
-
 }
