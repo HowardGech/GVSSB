@@ -20,3 +20,29 @@ GVSSB: This function computes the variational parameters for a given prior. It s
 predict.GVSSB: This function provides predictions of the response vector based on a fitted GVSSB model and a covariate matrix. It uses the estimated model parameters to generate predictions for new data points.
 
 cv.GVSSB: This function performs cross-validation to select the prior with the smallest loss. It compares the performance of different priors by evaluating the loss function on validation data. Note that the function does not select the hyperparameters of the slab prior, as they are updated automatically within the GVSSB function.
+
+# Examples of the Utility of the package
+
+To illustrate the functions of this package, we first generate the covariate matrix and the coefficients as follows:
+```
+library(GVSSB)
+
+n <- 200
+G <- 200
+p_i <- 5
+p <- G * p_i
+X <- mvtnorm::rmvnorm(n, sigma=diag(p))
+
+k <- 10
+beta <- rep(0,p)
+nonzero_group <- sample(1:G, k)
+for(index in nonzero_group){
+    beta[p_i * (index - 1) + 1:p_i] <- runif(p_i, -1, 1)
+}
+```
+
+Next, we define the group index and simulate the response vectors:
+```
+groups <- rep(1:G, each = p_i)
+Y <- X %*% beta + rnorm(n, 0, 1)
+```
