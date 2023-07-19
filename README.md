@@ -68,6 +68,7 @@ sort(nonzero_group)
 sort(fit$selected_groups)
 ```
 ![Alt text](selected_groups.jpg)
+
 After fitting the GVSSB model, we can use it for prediction:
 
 ```
