@@ -46,3 +46,23 @@ Next, we define the group index and simulate the response vectors:
 groups <- rep(1:G, each = p_i)
 Y <- X %*% beta + rnorm(n, 0, 1)
 ```
+Then, we can make an inference based on the simulated data:
+
+```
+fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
+fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
+fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
+```
+Or we can select the prior by cross-validation:
+
+```
+fit <- cv.GVSSB(X, Y, groups, nfolds = 5, loss = 'L2')
+```
+
+And now we can build a prediction with the fitted GVSSB model:
+
+```
+n_test <- 50
+X_test <- mvtnorm::rmvnorm(n_test, sigma=diag(p))
+predict.GVSSB(fit, X_test)
+```
