@@ -23,7 +23,9 @@ cv.GVSSB: This function performs cross-validation to select the prior with the s
 
 # Examples of the Utility of the package
 
-To illustrate the functions of this package, we first generate the covariate matrix and the coefficients as follows:
+To illustrate the functions of the GVSSB package, let's walk through an example step-by-step.
+
+First, we generate the covariate matrix (X) and coefficients (beta) as follows:
 ```
 library(GVSSB)
 
@@ -41,25 +43,32 @@ for(index in nonzero_group){
 }
 ```
 
-Next, we define the group index and simulate the response vectors:
+Next, we define the group index and simulate the response vectors (Y):
 ```
 groups <- rep(1:G, each = p_i)
-Y <- X %*% beta + rnorm(n, 0, 1)
+snr <- 1
+Y <- X %*% beta + rnorm(n, 0, sd = sqrt(var(X %*% beta) / snr)
 ```
-Then, we can make an inference based on the simulated data:
+Now, let's use the simulated data to make an inference based on different priors:
 
 ```
 fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
 ```
-Or we can select the prior by cross-validation:
+Alternatively, we can select the prior using cross-validation:
 
 ```
 fit <- cv.GVSSB(X, Y, groups, nfolds = 5, loss = 'L2')
 ```
 
-And now we can build a prediction with the fitted GVSSB model:
+Here we compare the true nonzero groups and the selected (positive) groups:
+```
+sort(nonzero_group)
+sort(fit$selected_groups)
+```
+![Alt text](selected_groups.jpg)
+After fitting the GVSSB model, we can use it for prediction:
 
 ```
 n_test <- 50
