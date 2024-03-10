@@ -19,7 +19,8 @@ GVSSB(
   threshold = 0.5,
   tol = 1e-05,
   iter.max = 5000,
-  info = T
+  info = T,
+  standardize = T
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ GVSSB(
 \item{iter.max}{Maximum iteration number of the algorithm. Default is 5000.}
 
 \item{info}{Whether print the iteration numbers per 100 steps and when the convergence is satisfied. Default is TRUE.}
+
+\item{standardize}{Whether standardize the covariates. Default is TRUE.}
 }
 \value{
 An object with S3 class "GVSSB".
