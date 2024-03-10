@@ -117,6 +117,7 @@ if(standardize){
   Xold = X
   X = Xtilde
 }
+  Xold = X
 
   ## Initialize the hyperparameters.
   if(missing(w)) w = 1/G
