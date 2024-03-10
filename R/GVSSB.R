@@ -19,6 +19,7 @@
 #' @param tol Convergence tolerance. The algorithm iterates untill the difference of binary entropy between two consecutive steps is smaller than this value. Default is 1e-5.
 #' @param iter.max Maximum iteration number of the algorithm. Default is 5000.
 #' @param info Whether print the iteration numbers per 100 steps and when the convergence is satisfied. Default is TRUE.
+#' @param standardize Whether standardize the covariates. Default is TRUE.
 #' @return An object with S3 class "GVSSB".
 #' \tabular{ll}{
 #'    \code{beta} \tab The sparse estimation of coefficients. \cr
@@ -71,7 +72,7 @@
 #' fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 #' fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
 #' @export
-GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'), nu=1,lambda=1, em=T,alpha= 0,beta = 0,threshold = 0.5,tol = 1e-5, iter.max = 5000, info = T){
+GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'), nu=1,lambda=1, em=T,alpha= 0,beta = 0,threshold = 0.5,tol = 1e-5, iter.max = 5000, info = T, standardize=T){
   Y = as.matrix(Y)
   n = nrow(Y)
   if(nrow(X) != n) stop("input dimensions doesn't match!")
@@ -87,7 +88,7 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'),
   ## Standardize the raw data.
   Yold = Y
   Y = Y - mean(Y)
-
+if(standardize){
   Xstar = matrix(NA, dim(X)[1], dim(X)[2])
   for (j in 1 : dim(X)[2]) {
     Xstar[,j] = (X[,j] - mean(X[,j]))
@@ -115,6 +116,7 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'),
   }
   Xold = X
   X = Xtilde
+}
 
   ## Initialize the hyperparameters.
   if(missing(w)) w = 1/G
@@ -246,6 +248,7 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'),
 
   ## Compute the estimation of coefficients and intercept for raw data.
   betaSD = rep(NA, length(mu))
+  if(standardize){
   for (g in 1 : G) {
     active = which(groups == uni.group[g])
     if (length(active) == 1) {
@@ -253,6 +256,9 @@ GVSSB = function(X, Y, groups, w, sigma_tilde,prior=c('Gaussian','Laplace','T'),
     } else {
       betaSD[active] = (Qmat[[g]] %*% diag(1/sqrt(Dvec[[g]])) %*% beta[active])
     }
+  }
+  }else{
+    betaSD = beta
   }
 
   muSD = beta
