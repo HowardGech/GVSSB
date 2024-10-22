@@ -3,30 +3,30 @@ This is the repository for the paper A Generic Variational Spike-and-Slab Approa
 
 To install the package, run the following code:
 
-```
+```r
 library(devtools)
 install_github(repo="HowardGech/GVSSB")
 ```
 
 If the package $\texttt{devtools}$ is not available in your R version,  download the zip file and unfold it into a user-specified folder (for example, GVSSB), and install it by:
 
-```
+```r
 install.packages("/path/to/folder/GVSSB", repos = NULL, type = "source")
 ```
 The package includes three main functions:
 
-GVSSB: This function computes the variational parameters for a given prior. It supports Gaussian prior, Laplace prior, and student T prior, and performs the variational Bayesian inference to estimate the model parameters.
+- `GVSSB`: This function computes the variational parameters for a given prior. It supports Gaussian prior, Laplace prior, and student T prior, and performs the variational Bayesian inference to estimate the model parameters.
 
-predict.GVSSB: This function provides predictions of the response vector based on a fitted GVSSB model and a covariate matrix. It uses the estimated model parameters to generate predictions for new data points.
+- `predict.GVSSB`: This function provides predictions of the response vector based on a fitted GVSSB model and a covariate matrix. It uses the estimated model parameters to generate predictions for new data points.
 
-cv.GVSSB: This function performs cross-validation to select the prior with the smallest loss. It compares the performance of different priors by evaluating the loss function on validation data. Note that the function does not select the hyperparameters of the slab prior, as they are updated automatically within the GVSSB function.
+- `cv.GVSSB`: This function performs cross-validation to select the prior with the smallest loss. It compares the performance of different priors by evaluating the loss function on validation data. Note that the function does not select the hyperparameters of the slab prior, as they are updated automatically within the GVSSB function.
 
 # Examples of the Utility of the package
 
 To illustrate the functions of the GVSSB package, let's walk through an example step-by-step.
 
 First, we generate the covariate matrix (X) and coefficients (beta) as follows:
-```
+```r
 library(GVSSB)
 
 n <- 200
@@ -44,26 +44,26 @@ for(index in nonzero_group){
 ```
 
 Next, we define the group index and simulate the response vectors (Y):
-```
+```r
 groups <- rep(1:G, each = p_i)
 snr <- 1
 Y <- X %*% beta + rnorm(n, 0, sd = sqrt(var(X %*% beta) / snr)
 ```
 Now, let's use the simulated data to make an inference based on different priors:
 
-```
+```r
 fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
 ```
 Alternatively, we can select the prior using cross-validation:
 
-```
+```r
 fit <- cv.GVSSB(X, Y, groups, nfolds = 5, loss = 'L2')
 ```
 
 Here we compare the true nonzero groups and the selected (positive) groups:
-```
+```r
 sort(nonzero_group)
 sort(fit$selected_groups)
 ```
@@ -71,7 +71,7 @@ sort(fit$selected_groups)
 
 After fitting the GVSSB model, we can use it for prediction:
 
-```
+```r
 n_test <- 50
 X_test <- mvtnorm::rmvnorm(n_test, sigma=diag(p))
 predict.GVSSB(fit, X_test)
