@@ -2,17 +2,18 @@
 % Please edit documentation in R/GVSSB.R
 \name{GVSSB}
 \alias{GVSSB}
-\title{Fit a group linear regression model with discrete spike and slab prior.}
+\title{Fit a group linear regression model with discrete spike and slab prior in variational Bayes.}
 \usage{
 GVSSB(
   X,
   Y,
   groups,
+  Omega,
   w,
-  sigma_tilde,
+  lambda,
+  sigma_noise,
   prior = c("Gaussian", "Laplace", "T"),
   nu = 1,
-  lambda = 1,
   em = T,
   alpha = 0,
   beta = 0,
@@ -30,15 +31,17 @@ GVSSB(
 
 \item{groups}{The group indicator vector with length p.}
 
-\item{w}{The hyperparameter controlling the sparsity.}
+\item{Omega}{The prior precision matrix of the coefficients. Default is identity matrix.}
 
-\item{sigma_tilde}{The initial value of noise level \eqn{\tilde{\sigma}^2}.}
+\item{w}{The hyperparameter controlling the sparsity. If missing, the algorithm will use group Lasso to initialize this value.}
+
+\item{lambda}{The initial value of hyperparameter \eqn{\lambda}. If missing, the algorithm will use group Lasso to initialize this value.}
+
+\item{sigma_noise}{The initial value of noise level \eqn{\tilde{\sigma}^2}.}
 
 \item{prior}{The slab part of the coefficient prior. Default is "Gaussian".}
 
 \item{nu}{Degree of freedom when the slab is T distribution. Only useful when prior='T'. Default is 1.}
-
-\item{lambda}{The initial value of hyperparameter \eqn{\lambda}. Default is 1.}
 
 \item{em}{Whether update hyperparameters using variational EM algorithm. Default is TRUE.}
 
@@ -59,11 +62,17 @@ GVSSB(
 \value{
 An object with S3 class "GVSSB".
 \tabular{ll}{
+   \code{data} \tab The data information. \cr
+   \tab \cr
    \code{beta} \tab The sparse estimation of coefficients. \cr
    \tab \cr
    \code{intercept} \tab The fitted value of intercept. \cr
    \tab \cr
-   \code{sigma} \tab The fitted value of noise level \eqn{\tilde{\sigma}}.\cr
+   \code{sigma_noise} \tab The fitted value of noise level \eqn{\tilde{\sigma}}.\cr
+   \tab \cr
+   \code{mu} \tab The posterior mean of the coefficients. \cr
+   \tab \cr
+   \code{Sigma} \tab The posterior covariance matrix of the coefficients. \cr
    \tab \cr
    \code{gamma} \tab The posterior inclusion probability for each groups.\cr
    \tab \cr
@@ -71,15 +80,13 @@ An object with S3 class "GVSSB".
    \tab \cr
    \code{lambda} \tab The value of the hyperparameter \eqn{\lambda}. If em=FALSE, this value is the same as the input argument.\cr
    \tab \cr
-   \code{groups_index} \tab The group index with length p.\cr
-   \tab \cr
    \code{prior} \tab The slab part of the coefficient prior.\cr
    \tab \cr
    \code{nu} \tab Degree of freedom when the slab is T distribution.\cr
 }
 }
 \description{
-This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes.
+This function gives a sparse estimation of the coefficients in group linear model using spike and slab variational Bayes. To make prediction, please use \code{\link{predict.GVSSB}}.
 }
 \examples{
 # load GVSSB library
@@ -109,7 +116,10 @@ snr <- 1
 Y <- X \%*\% beta + rnorm(n, 0, sd = sqrt(var(X \%*\% beta) / snr))
 
 # fit GVSSB model
-fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
-fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
-fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
+model.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
+model.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
+model.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
+}
+\seealso{
+\code{\link{AMSSB}}, \code{\link{predict.GVSSB}}, \code{\link{cv.GVSSB}}
 }

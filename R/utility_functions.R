@@ -16,3 +16,15 @@ loss_func = function(loss, vec1, vec2){
   if(loss == 'L1') return(sum(abs(vec1 - vec2)))
   if(loss == 'L2') return(sqrt(sum((vec1 - vec2)^2)))
 }
+
+coverage_determine = function(gamma,alpha,mu,Sigma,beta){
+    if(gamma<=alpha) return(prod(beta==0))
+    modified_alpha = 1-alpha/gamma
+    threshold = qchisq(modified_alpha, df = length(mu))
+    if(mu%*%solve(Sigma)%*%mu>threshold){
+        return((beta-mu)%*%solve(Sigma)%*%(beta-mu)<=threshold)
+    }
+    if(prod(beta==0)) return(TRUE)
+    if((beta-mu)%*%solve(Sigma)%*%(beta-mu)<=qchisq(modified_alpha+1-gamma, df = length(mu))) return(1)
+    return(FALSE)
+}

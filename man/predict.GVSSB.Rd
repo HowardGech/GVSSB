@@ -2,9 +2,9 @@
 % Please edit documentation in R/predict.GVSSB.R
 \name{predict.GVSSB}
 \alias{predict.GVSSB}
-\title{Gives a prediction of a linear regression problem using a fitted GVSSB model.}
+\title{Gives the prediction of a linear regression problem using a fitted GVSSB model.}
 \usage{
-\method{predict}{GVSSB}(object, X, threshold, ...)
+\method{predict}{GVSSB}(object, X, ...)
 }
 \arguments{
 \item{object}{A fitted GVSSB object.}
@@ -16,7 +16,11 @@
 \value{
 An object with S3 class "predicted_GVSSB".
 \tabular{ll}{
+   \code{X} \tab The covariate matrix. \cr
+   \tab \cr
    \code{Y_hat} \tab The estimated value of the response vector. \cr
+   \tab \cr
+   \code{model} \tab The fitted GVSSB model. \cr
 }
 }
 \description{
@@ -52,9 +56,11 @@ fit.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
 fit.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 fit.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
 
-# give the prediction
+# generate new data
 n_test <- 50
 X_test <- mvtnorm::rmvnorm(n_test, sigma=diag(p))
+
+# get the prediction
 predict.Gaussian <- predict.GVSSB(fit.Gaussian, X_test)
 predict.Laplace <- predict.GVSSB(fit.Laplace, X_test)
 predict.Cauchy <- predict.GVSSB(fit.Cauchy, X_test)
