@@ -1,4 +1,7 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+# Hugo output
+public/
+resources/
+.hugo_build.lock
+
+# Editor
+.vscode/
