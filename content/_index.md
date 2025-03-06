@@ -1,5 +1,5 @@
 ---
-title: "GVSSB"
+title: ""
 toc: false
 ---
 ![](GVSSB_icon.svg)
