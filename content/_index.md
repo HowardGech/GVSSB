@@ -1,6 +1,7 @@
 ---
 title: ""
 # toc: false
+type: docs
 # next: Installation
 ---
 ![](GVSSB_icon.svg)
