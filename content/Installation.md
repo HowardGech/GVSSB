@@ -1,6 +1,6 @@
 ---
 title: Demo Page
-# type: docs
+type: docs
 prev: /
 # next: Installation/folder/
 ---

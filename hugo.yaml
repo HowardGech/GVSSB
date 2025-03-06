@@ -45,8 +45,8 @@ params:
       dark: favicon.svg
 
   footer:
-    displayCopyright: false
-    displayPoweredBy: false
+    displayCopyright: true
+    displayPoweredBy: true
 
   editURL:
     enable: false
