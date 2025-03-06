@@ -1,8 +1,8 @@
 ---
-title: Demo Page
+title: Installation
 type: docs
-prev: /
-# next: Installation/folder/
+# prev: /
+next: Prediction
 ---
 
 A simple demo page.
