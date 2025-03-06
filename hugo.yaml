@@ -1,5 +1,5 @@
 # Hugo configuration file
-title: My Site
+title: GVSSB
 
 # import hextra as module
 module:
@@ -18,12 +18,6 @@ markup:
 
 menu:
   main:
-    - name: Docs
-      pageRef: /docs
-      weight: 1
-    - name: About
-      pageRef: /about
-      weight: 2
     - name: Contact ↗
       url: "mailto:gech@sas.upenn.edu"
       weight: 3
@@ -45,11 +39,14 @@ menu:
 params:
   navbar:
     displayTitle: true
-    displayLogo: false
+    displayLogo: true
+    logo:
+      path: favicon.svg
+      dark: favicon.svg
 
   footer:
-    displayCopyright: false
-    displayPoweredBy: true
+    displayCopyright: true
+    displayPoweredBy: false
 
   editURL:
     enable: true
