@@ -1,17 +1,13 @@
 ---
-title: My Site
+title: "GVSSB"
 toc: false
 ---
+<img src="GVSSB-icon.svg" align="right" width="155"/>
 
-This is the landing page. Test.
+**GVSSB** is an an algorithm for fitting sparse group linear models and sparse additime models using variational Bayes with spike-and-slab prior in R language. 
 
-## Explore
 
 {{< cards >}}
   {{< card link="docs" title="Docs" icon="book-open" >}}
-  {{< card link="about" title="About" icon="user" >}}
 {{< /cards >}}
 
-## Documentation
-
-For more information, visit [Hextra](https://imfing.github.io/hextra).
