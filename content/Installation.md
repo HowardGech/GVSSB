@@ -1,7 +1,7 @@
 ---
 title: Installation
 type: docs
-# prev: /
+prev: /
 next: Prediction
 ---
 
