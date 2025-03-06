@@ -1,8 +1,8 @@
 ---
 title: Demo Page
-type: docs
+# type: docs
 prev: /
-next: docs/folder/
+# next: Installation/folder/
 ---
 
 A simple demo page.
