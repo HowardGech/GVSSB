@@ -13,8 +13,9 @@ The `GVSSB` function aims at solving sparse group linear regression problems. Fo
 - `prior`: The slab part of the coefficient prior. To use the Cauchy distribution, set it to `"T"` and also pass `nu=1`.
 Other arguments can be found in its help function by calling `help(GVSSB)`.
 
+`GVSSB` returns a list of values. The fitted coefficients and intercepts can be accessed by `beta` and `intercept`. You can also get the selected group indices by `selected_groups`.
 
-```r {filename="example for sparse linear model"}
+```r {filename="example of sparse linear model"}
 library(GVSSB)
 n <- 200
 G <- 200
@@ -29,5 +30,7 @@ for(index in nonzero_group){
 }
 groups <- rep(1:G, each = p_i)
 Y <- X %*% beta + rnorm(n, 0, sd = 3)
-model.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu=1)
+model.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 ```
+One implementation of this example gives:
+![](GVSSB_result.png)
