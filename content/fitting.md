@@ -3,6 +3,7 @@ title: Model Fitting
 type: docs
 prev: Installation
 next: Prediction
+math: true
 ---
 
 ## Sparse Group Linear Models
@@ -30,7 +31,7 @@ for(index in nonzero_group){
 }
 groups <- rep(1:G, each = p_i)
 Y <- X %*% beta + rnorm(n, 0, sd = 3)
-model.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
+gvssb.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 ```
 One implementation of this example gives:
 ![](GVSSB_result.png)
@@ -49,16 +50,24 @@ One implementation of this example gives:
 library(GVSSB)
 n <- 200
 G <- 300
-X <- mvtnorm::rmvnorm(n, sigma=diag(G))
+Xs <- mvtnorm::rmvnorm(n, sigma=diag(G))
 f1 <- function(x) 5 * sin(x)
 f2 <- function(x) 2 * (x^2 - 0.5)
 f3 <- function(x) 2 * exp(x)
 f4 <- function(x) 3 * x
-Y <- f1(X[,1]) + f2(X[,2]) + f3(X[,3]) + f4(X[,4]) + rnorm(n, 0, 1)
-model.Laplace <- AMSSB(X, Y, prior = 'Laplace')
+Ys <- f1(Xs[,1]) + f2(Xs[,2]) + f3(Xs[,3]) + f4(Xs[,4]) + rnorm(n, 0, sd = 1)
+amssb.Laplace <- AMSSB(Xs, Ys, prior = 'Laplace')
 ```
-![](GVSSB_result.png)
+![](AMSSB_result.png)
 
-To make prediction using fitted `GVSSB` and `AMSSB` models, please refer to the [Prediction](../prediction) section.
+To make prediction using fitted `GVSSB` and `AMSSB` models, please refer to the [Prediction and Inference](../prediction) section.
 
 ## Selecting Priors with Cross-Validation
+
+Users can automatically choose the prior through cross-validation (CV), simply by calling `cv.GVSSB` or `cv.AMSSB`. The `nfolds` argument specifies the number of folds in CV, and `loss` determines the loss function. We currently support both $\ell_1$ and $\ell_2$ errors.
+
+```r {filename="example - cross validation"}
+GVSSB.cv = cv.GVSSB(X, Y, groups, nfolds = 5)
+amssb.cv = cv.AMSSB(Xs, Ys, nfolds = 5)
+```
+![](cv_prior.png)
