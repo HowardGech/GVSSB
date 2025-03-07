@@ -67,7 +67,7 @@ To make prediction using fitted `GVSSB` and `AMSSB` models, please refer to the 
 Users can automatically choose the prior through cross-validation (CV), simply by calling `cv.GVSSB` or `cv.AMSSB`. The `nfolds` argument specifies the number of folds in CV, and `loss` determines the loss function. We currently support both $\ell_1$ and $\ell_2$ errors.
 
 ```r {filename="example - cross validation"}
-GVSSB.cv = cv.GVSSB(X, Y, groups, nfolds = 5)
-amssb.cv = cv.AMSSB(Xs, Ys, nfolds = 5)
+GVSSB.cv <- cv.GVSSB(X, Y, groups, nfolds = 5, loss = 'L2')
+amssb.cv <- cv.AMSSB(Xs, Ys, nfolds = 5, loss = 'L2')
 ```
 ![](cv_prior.png)
