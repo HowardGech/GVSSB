@@ -13,7 +13,7 @@ The `GVSSB` function aims at solving sparse group linear regression problems. Fo
 - `prior`: The slab part of the coefficient prior. To use the Cauchy distribution, set it to `"T"` and also pass `nu=1`.
 Other arguments can be found in its help function by calling `help(GVSSB)`.
 
-For a more comprehensive understanding, let's go through one example:
+
 ```r {filename="sparse linear model"}
 library(GVSSB)
 n <- 200
