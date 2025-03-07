@@ -15,7 +15,7 @@ Other arguments can be found in its help function by calling `help(GVSSB)`.
 
 `GVSSB` returns a list of values. The fitted coefficients and intercepts can be accessed by `beta` and `intercept`. You can also get the selected group indices by `selected_groups`.
 
-```r {filename="example of sparse linear model"}
+```r {filename="example - sparse linear model"}
 library(GVSSB)
 n <- 200
 G <- 200
