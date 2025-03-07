@@ -1,7 +1,7 @@
 ---
-title: Prediction
+title: Prediction and Inference
 type: docs
-prev: Installation
+prev: Model Fitting
 # next: Prediction
 ---
 
