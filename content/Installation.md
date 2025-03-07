@@ -12,7 +12,7 @@ library(devtools)
 install_github(repo="HowardGech/GVSSB")
 ```
 
-If the package `devtools` is not available in your R version, you can also install it by source. Navigate to the [github](https://github.com/HowardGech/GVSSB/) page, download the zip file and unfold it into a user-specified folder (for example, GVSSB), and install it by:
+If the package `devtools` is not available in your R version, you can also install it by source. To do so, navigate to the [github](https://github.com/HowardGech/GVSSB/) page, download the zipped file and unfold it into a user-specified folder (for example, GVSSB), and install it by:
 
 ```r
 install.packages("/path/to/folder/GVSSB", repos = NULL, type = "source")
