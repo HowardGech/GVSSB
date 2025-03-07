@@ -59,4 +59,6 @@ model.Laplace <- AMSSB(X, Y, prior = 'Laplace')
 ```
 ![](GVSSB_result.png)
 
-To make prediction using fitted `GVSSB` and `AMSSB` models, please refer to the [Prediction](prediction.md) section.
+To make prediction using fitted `GVSSB` and `AMSSB` models, please refer to the [Prediction](../prediction) section.
+
+## Selecting Priors with Cross-Validation
