@@ -104,6 +104,7 @@ cv.AMSSB = function(X, Y, nfolds = 5, degree = 5, knots = NULL, Boundary.knots =
   priors = c('Gaussian', 'Laplace', 'Cauchy')
   cv.prior = priors[which.min(mean_error)]
   if(verbose) message(paste0('The best prior is ', cv.prior, '. Fitting the model with full data...'))
+  if(cv.prior == 'Cauchy') cv.prior = 'T'
   fit = AMSSB(X, Y, prior = cv.prior, degree = degree, knots = knots, Boundary.knots = Boundary.knots, spline_der_length = spline_der_length, svd_threshold = svd_threshold, info = F, ...)
 
   return(fit)

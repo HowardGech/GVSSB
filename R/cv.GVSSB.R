@@ -101,6 +101,7 @@ cv.GVSSB = function(X, Y, groups, nfolds = 5, loss = c('L2','L1'), verbose = TRU
   priors = c('Gaussian','Laplace','T')
   cv_prior = priors[which.min(mean_error)]
   if(verbose) message(paste0('The best prior is ', cv_prior, '. Fitting the model with full data...'))
+  if(cv.prior == 'Cauchy') cv.prior = 'T'
   fit = GVSSB(X, Y, groups, prior = cv_prior, info = F, ...)
 
 return(fit)
