@@ -4,7 +4,7 @@
 \alias{cv.GVSSB}
 \title{Choose the prior of GVSSB using cross-validation.}
 \usage{
-cv.GVSSB(X, Y, groups, nfolds = 5, loss = c("L2", "L1"), ...)
+cv.GVSSB(X, Y, groups, nfolds = 5, loss = c("L2", "L1"), verbose = TRUE, ...)
 }
 \arguments{
 \item{X}{An n by p matrix of covariates.}
@@ -16,6 +16,8 @@ cv.GVSSB(X, Y, groups, nfolds = 5, loss = c("L2", "L1"), ...)
 \item{nfolds}{The total number of folds for cross-validation. Default is 5.}
 
 \item{loss}{Loss used as cross-validation error. Valid options are "L1" and "L2". Default is "L2".}
+
+\item{verbose}{A logical value indicating whether to print the progress. Default is TRUE.}
 
 \item{...}{Other arguments used in GVSSB.}
 }
@@ -54,7 +56,7 @@ p <- G * p_i
 X <- mvtnorm::rmvnorm(n, sigma=diag(p))
 
 # generate coefficients
-k <- 10
+k <- 5
 beta <- rep(0,p)
 nonzero_group <- sample(1:G, k)
 for(index in nonzero_group){
@@ -65,9 +67,9 @@ for(index in nonzero_group){
 groups <- rep(1:G, each = p_i)
 
 # generate response vector
-Y <- X \%*\% beta + rnorm(n, 0, 1)
+Y <- X \%*\% beta + rnorm(n, 0, sd = 1)
 
-# fit GVSSB model
+# fit GVSSB model with cross-validation
 fit <- cv.GVSSB(X, Y, groups, nfolds = 5, loss = 'L2')
 
 

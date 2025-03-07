@@ -7,6 +7,7 @@
 #' @param groups The group indicator vector with length p.
 #' @param nfolds The total number of folds for cross-validation. Default is 5.
 #' @param loss Loss used as cross-validation error. Valid options are "L1" and "L2". Default is "L2".
+#' @param verbose A logical value indicating whether to print the progress. Default is TRUE.
 #' @param ... Other arguments used in GVSSB.
 #' @return An object with S3 class "GVSSB" selected by cross-validation.
 #' \tabular{ll}{
@@ -39,7 +40,7 @@
 #' X <- mvtnorm::rmvnorm(n, sigma=diag(p))
 #' 
 #' # generate coefficients
-#' k <- 10
+#' k <- 5
 #' beta <- rep(0,p)
 #' nonzero_group <- sample(1:G, k)
 #' for(index in nonzero_group){
@@ -50,22 +51,29 @@
 #' groups <- rep(1:G, each = p_i)
 #' 
 #' # generate response vector
-#' Y <- X %*% beta + rnorm(n, 0, 1)
+#' Y <- X %*% beta + rnorm(n, 0, sd = 1)
 #' 
-#' # fit GVSSB model
+#' # fit GVSSB model with cross-validation
 #' fit <- cv.GVSSB(X, Y, groups, nfolds = 5, loss = 'L2')
 #' 
 #' 
 #' @export cv.GVSSB
 #' @export
-cv.GVSSB = function(X, Y, groups, nfolds = 5, loss = c('L2','L1') ,...){
+cv.GVSSB = function(X, Y, groups, nfolds = 5, loss = c('L2','L1'), verbose = TRUE, ...){
   loss = match.arg(loss)
   Y = as.matrix(Y)
   n = nrow(Y)
-  if(nrow(X) != n) stop("input dimensions don't match!")
+
+  # consistency check
+  if(!is.matrix(X)) stop("X should be a matrix!")
+  if(!(loss %in% c('L2','L1'))) stop('Loss type incorrect. Only L1 loss and L2 loss are supported.')
+  if(nrow(X) != n) stop("The dimension of X and Y don't match!")
+
   error = matrix(NA, nrow = 5, ncol = 3)
   
+  # cross-validation
   for(fold in 1:nfolds){
+    if(verbose) message(paste0('Fold ', fold, ' of ', nfolds, '...'))
     # separate training data and testing data
     Xtrain = X[-(((fold- 1) * n / nfolds + 1):(fold * n / nfolds)), ]
     Ytrain = Y[-(((fold- 1) * n / nfolds+ 1):(fold * n / nfolds)), ]
@@ -92,7 +100,7 @@ cv.GVSSB = function(X, Y, groups, nfolds = 5, loss = c('L2','L1') ,...){
   mean_error = colMeans(error)
   priors = c('Gaussian','Laplace','T')
   cv_prior = priors[which.min(mean_error)]
-
+  if(verbose) message(paste0('The best prior is ', cv_prior, '. Fitting the model with full data...'))
   fit = GVSSB(X, Y, groups, prior = cv_prior, info = F, ...)
 
 return(fit)

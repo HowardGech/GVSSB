@@ -51,7 +51,7 @@ model.Laplace <- AMSSB(X, Y, prior = 'Laplace')
 
 # generate new data
 n_test <- 50
-X_test <- mvtnorm::rmvnorm(n_test, sigma=diag(G))
+X_test <- mvtnorm::rmvnorm(n_test, sigma = diag(G))
 
 # get the prediction
 predict.Laplace <- predict.AMSSB(model.Laplace, X_test)

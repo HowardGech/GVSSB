@@ -100,7 +100,7 @@ p <- G * p_i
 X <- mvtnorm::rmvnorm(n, sigma=diag(p))
 
 # generate coefficients
-k <- 10
+k <- 5
 beta <- rep(0,p)
 nonzero_group <- sample(1:G, k)
 for(index in nonzero_group){
@@ -112,8 +112,7 @@ groups <- rep(1:G, each = p_i)
 
 # generate response vector
 
-snr <- 1
-Y <- X \%*\% beta + rnorm(n, 0, sd = sqrt(var(X \%*\% beta) / snr))
+Y <- X \%*\% beta + rnorm(n, 0, sd = 3)
 
 # fit GVSSB model
 model.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')

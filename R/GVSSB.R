@@ -60,7 +60,7 @@
 #' X <- mvtnorm::rmvnorm(n, sigma=diag(p))
 #'
 #' # generate coefficients
-#' k <- 10
+#' k <- 5
 #' beta <- rep(0,p)
 #' nonzero_group <- sample(1:G, k)
 #' for(index in nonzero_group){
@@ -72,8 +72,7 @@
 #'
 #' # generate response vector
 #'
-#' snr <- 1
-#' Y <- X %*% beta + rnorm(n, 0, sd = sqrt(var(X %*% beta) / snr))
+#' Y <- X %*% beta + rnorm(n, 0, sd = 3)
 #'
 #' # fit GVSSB model
 #' model.Gaussian <- GVSSB(X, Y, groups, prior = 'Gaussian')
@@ -134,7 +133,7 @@ GVSSB = function(X, Y, groups, Omega, w, lambda, sigma_noise, prior=c('Gaussian'
   ## Initialize the hyperparameters if not provided.
   if(missing(lambda) || missing(w)){
     y = Y
-    message('Initializing hyperparameters with group Lasso ...')
+    if(info) message('Initializing hyperparameters with group Lasso ...')
       cv_grp = cv.grpreg(X,y,groups,nlambda=10,nfolds=5)
 which_lambda_min = which.min(cv_grp$cve)
 cv_e_se = cv_grp$cve[which_lambda_min] + cv_grp$cvse[which_lambda_min]
@@ -286,7 +285,7 @@ nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]
       mu_raw[active] = beta_raw[active]
       Sigma_raw[active,active] = Sigma[active, active] * (sqrt(dim(Xstar)[1]) / sqrt(sum(Xstar[,active]^2)))^2
     } else {
-      beta_raw[active] = (Qmat[[g]] %*% diag(1/sqrt(Dvec[[g]])) %*% beta[active])
+      beta_raw[active] = (Qmat[[g]] %*% diag(1/sqrt(Dvec[[g]])) %*% mu[active])
       mu_raw[active] = beta_raw[active]
       Sigma_raw[active,active] = Qmat[[g]] %*% diag(1/sqrt(Dvec[[g]])) %*% Sigma[active, active] %*% diag(1/sqrt(Dvec[[g]])) %*% t(Qmat[[g]])
     }
@@ -296,7 +295,6 @@ nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]
     mu_raw = mu
     Sigma_raw = Sigma
   }
-
   beta_raw = beta_raw * (gamma[groups_index] > threshold)
   intercept_raw = mean(Yold-Xold%*%beta_raw)
   selected_groups = which(gamma > threshold)

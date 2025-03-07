@@ -1,16 +1,23 @@
 Package: GVSSB
 Type: Package
 Title: Group Variational Spike-and-Slab Bayes
-Version: 0.0.1
+Version: 0.1.0
 Author: Changhao Ge, Buyu Lin
 Maintainer: Changhao Ge <gech@upenn.sas.edu>
-License: MIT
-Description: FILL
-LazyData: TRUE
+License: MIT + file LICENSE
+Description: This package implements the group variational spike-and-slab Bayes (GVSSB) method for high-dimensional variable selection. The GVSSB method is a Bayesian approach that uses a variational inference algorithm to estimate the posterior distribution of the model parameters. It is designed to handle high-dimensional data with a large number of predictors and can be used for both linear and additive models.
+LazyData: true
 Encoding: UTF-8
 Imports: glmnet,
   grpreg,
   mvtnorm,
-  splines2
+  splines2,
+  cluster
 RoxygenNote: 7.2.3
+Suggests:
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
+LazyDataCompression:xz
+Depends:
+    R (>= 3.5.0)

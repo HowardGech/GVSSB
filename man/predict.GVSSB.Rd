@@ -38,7 +38,7 @@ p <- G * p_i
 X <- mvtnorm::rmvnorm(n, sigma=diag(p))
 
 # generate coefficients
-k <- 10
+k <- 5
 beta <- rep(0,p)
 nonzero_group <- sample(1:G, k)
 for(index in nonzero_group){
