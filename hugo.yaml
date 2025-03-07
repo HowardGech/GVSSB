@@ -11,7 +11,12 @@ markup:
   goldmark:
     renderer:
       unsafe: true
-
+    extensions:
+      passthrough:
+        delimiters:
+          block: [['\[', '\]'], ['$$', '$$']]
+          inline: [['\(', '\)']]
+        enable: true
   # enable hextra syntax highlight
   highlight:
     noClasses: false
