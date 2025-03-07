@@ -14,7 +14,7 @@ The `GVSSB` function aims at solving sparse group linear regression problems. Fo
 Other arguments can be found in its help function by calling `help(GVSSB)`.
 
 
-```r {filename="sparse linear model"}
+```r {filename="example for sparse linear model"}
 library(GVSSB)
 n <- 200
 G <- 200
