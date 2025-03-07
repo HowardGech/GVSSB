@@ -6,7 +6,8 @@ next: Model Fitting
 ---
 
 To install the GVSSB package, please ensure that the `devtools` package is installed in the R version you're using, then proceed with
-```r {linenos=inline}
+
+```r
 library(devtools)
 install_github(repo="HowardGech/GVSSB")
 ```
