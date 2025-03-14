@@ -60,8 +60,8 @@ predict.AMSSB = function(object, X, truncate = TRUE, ...){
 
   # standardize the covariates
   X.ran = X.max - X.min
-  X.min.rep = matrix(rep(X.min, each = n), nrow = n, byrow = TRUE)
-  X.ran.rep = matrix(rep(X.ran, each = n), nrow = n, byrow = TRUE)
+  X.min.rep = matrix(rep(X.min, n), nrow = n, byrow = TRUE)
+  X.ran.rep = matrix(rep(X.ran, n), nrow = n, byrow = TRUE)
   X_trans = (X - X.min.rep) / X.ran.rep
 
   if(truncate){
