@@ -2,7 +2,7 @@
 title: Model Fitting
 type: docs
 prev: Installation
-next: Prediction
+next: Prediction and Inference
 math: true
 ---
 
