@@ -15,3 +15,7 @@ gvssb.predicted <- predict.GVSSB(gvssb.Laplace, X_test)
 ```
 You may also get the volume of coverage region using the `coverage` function by specifying the fitted model, confidence level and inference type (`group` or `marginal`). If a coefficient vector is provided, it will also provide a vector of logical values indicating whether each coefficient (group) is selected as nonzero.
 
+```r {filename='example - GVSSB coverage'}
+gvssb.coverage.group = coverage(gvssb.Laplace, alpha = 0.95, beta = beta, type = "group")
+gvssb.coverage.marginal = coverage(gvssb.Laplace, alpha = 0.95, beta = beta, type = "marginal")
+```
