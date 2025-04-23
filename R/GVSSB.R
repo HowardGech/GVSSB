@@ -20,7 +20,10 @@
 #' @param beta Scale of the inverse gamma distribution for the noise level \eqn{\tilde{\sigma}^2}. Default is 0.
 #' @param threshold Threshold of the posterior inclusion probability. Only coefficients with posterior inclusion larger than this threshold are considered nonzero (signals).
 #' @param tol Convergence tolerance. The algorithm iterates untill the difference of binary entropy between two consecutive steps is smaller than this value. Default is 1e-5.
+#' @param iter.min Minimum iteration number of the algorithm. Default is 50.
 #' @param iter.max Maximum iteration number of the algorithm. Default is 5000.
+#' @param emGap The gap of EM update. Default is 10.
+#' @param sigmaGap The gap of noise level update. Default is 10.
 #' @param info Whether print the iteration numbers per 100 steps and when the convergence is satisfied. Default is TRUE.
 #' @param standardize Whether standardize the covariates. Default is TRUE.
 #' @return An object with S3 class "GVSSB".
@@ -79,7 +82,7 @@
 #' model.Laplace <- GVSSB(X, Y, groups, prior = 'Laplace')
 #' model.Cauchy <- GVSSB(X, Y, groups, prior = 'T', nu = 1)
 #' @export
-GVSSB = function(X, Y, groups, Omega, w, lambda, sigma_noise, prior=c('Gaussian','Laplace','T'), nu=1, em=T,alpha= 0,beta = 0,threshold = 0.5,tol = 1e-5, iter.max = 5000, info = T, standardize=T){
+GVSSB = function(X, Y, groups, Omega, w, lambda, sigma_noise, prior=c('Gaussian','Laplace','T'), nu=1, em=T,alpha= 0,beta = 0, threshold = 0.5,tol = 1e-5, iter.min=50, iter.max = 5000, emGap=10, sigmaGap=10, info = T, standardize=T){
   Y = as.matrix(Y)
   n = nrow(Y)
   if(nrow(X) != n) stop("input dimensions don't match!")
@@ -228,7 +231,7 @@ nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]
     }
 
     ## Variational EM update for hyperparameters.
-    if(count %% 10 == 0){
+    if(count %% emGap == 0){
       if(em){
         w = mean(gamma)
         lambda_old = lambda
@@ -244,7 +247,7 @@ nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]
 
 
     ## Update noise level.
-    if(count %% 10 == 0 & count <= 50){
+    if(count %% sigmaGap == 0 & count <= iter.min){
       sigma_old = sigma_tilde
       term1 = sum(r^2)
       term2 = sum(sapply(1:G, function(n) gamma[n] * (1 - gamma[n]) * t(mu[groups == uni.group[n]]) %*% XTX[groups == uni.group[n],groups == uni.group[n]] %*% mu[groups == uni.group[n]]))
