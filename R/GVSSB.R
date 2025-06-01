@@ -138,12 +138,12 @@ GVSSB = function(X, Y, groups, Omega, w, lambda, sigma_noise, prior=c('Gaussian'
     y = Y
     if(info) message('Initializing hyperparameters with group Lasso ...')
       cv_grp = cv.grpreg(X,y,groups,nlambda=10,nfolds=5)
-which_lambda_min = which.min(cv_grp$cve)
-cv_e_se = cv_grp$cve[which_lambda_min] + cv_grp$cvse[which_lambda_min]
-lambda_1se = cv_grp$lambda[cv_grp$cve<=cv_e_se] |> max()
-best_model = grpreg(X,y,groups,lambda = lambda_1se)
-mu_lasso = as.vector(best_model$beta[-1])
-nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]]^2)>0))
+      which_lambda_min = which.min(cv_grp$cve)
+      cv_e_se = cv_grp$cve[which_lambda_min] + cv_grp$cvse[which_lambda_min]
+      lambda_1se = cv_grp$lambda[cv_grp$cve<=cv_e_se] |> max()
+      best_model = grpreg(X,y,groups,lambda = lambda_1se)
+      mu_lasso = as.vector(best_model$beta[-1])
+      nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]]^2)>0))
       if(missing(lambda)){
         if(sum(mu_lasso != 0) != 0){
           if(prior == 'Gaussian') lambda = sqrt((sum(mu_lasso[mu_lasso!=0]%*%Omega[mu_lasso!=0,mu_lasso!=0]%*%mu_lasso[mu_lasso!=0]))/sum(mu_lasso!=0))
@@ -255,7 +255,7 @@ nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]
       v = term1+term2+term3
       sigma_tilde = as.numeric(sqrt((v/2 + beta)/(n/2 + alpha)))
     }
-    if(count > 50 & max(c(delta1)) < tol){
+    if(count > iter.min & max(c(delta1)) < tol){
       sigma_old = sigma_tilde
       term1 = sum(r^2)
       term2 = sum(sapply(1:G, function(n) gamma[n] * (1 - gamma[n]) * t(mu[groups == uni.group[n]]) %*% XTX[groups == uni.group[n],groups == uni.group[n]] %*% mu[groups == uni.group[n]]))
