@@ -236,7 +236,7 @@ nonzero_index = which(sapply(1:G,function(i) sum(mu_lasso[groups == uni.group[i]
         w = mean(gamma)
         lambda_old = lambda
 
-        if(prior == 'Gaussian') lambda = sqrt(sum(gamma * sapply(1:G,function(i) sum(diag(Sigma[groups == uni.group[i],groups == uni.group[i]])) + sum(mu[groups == uni.group[i]]^2))) / sum(gamma * p_i))
+        if(prior == 'Gaussian') lambda = sqrt(sum(gamma * sapply(1:G,function(i) sum(diag(Omega[groups == uni.group[i],groups == uni.group[i]]%*%Sigma[groups == uni.group[i],groups == uni.group[i]])) + sum(mu[groups == uni.group[i]]%*%Omega[groups == uni.group[i],groups == uni.group[i]]%*%mu[groups == uni.group[i]]))) / sum(gamma * p_i))
         if(prior == 'Laplace') lambda = sqrt(sum(gamma * (p_i + 1)) / sum(gamma*(sqrt(kappa)/lambda+1/lambda^2)))
         if(prior == 'T') lambda = sqrt(sum(gamma) / sum(gamma * diag_term))
       }
